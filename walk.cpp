@@ -149,14 +149,19 @@ public:
 	}
 } gl;
 
+
 class Level {
 public:
 	unsigned char arr[16][80];
+	int heightArr[180];
 	int nrows, ncols;
 	int tilesize[2];
 	Flt ftsz[2];
 	Flt tile_base;
 	Level() {
+		//Log("fill array\n");
+		for (int i=0; i<180; i++)
+			heightArr[i] = -1;
 		//Log("Level constructor\n");
 		tilesize[0] = 32;
 		tilesize[1] = 32;
@@ -640,11 +645,18 @@ void physics(void)
 	int col = (int)(gl.camera[0] / dd) + 500/lev.tilesize[0] +1;
 	col = col % lev.ncols;
 	int hgt = 0.0;
-	for (int i=0; i<lev.nrows; i++) {
-		if (lev.arr[i][col] != ' ') {
-			hgt = i;
-			break;
+	//add in conditional to check array
+	if (lev.heightArr[col]==-1) {
+	    	for (int i=0; i<lev.nrows; i++) {
+			if (lev.arr[i][col] != ' ') {
+				hgt = i;
+				lev.heightArr[col]=i;
+				break;
+			}
 		}
+		printf("Wrote to array: %d\n", col);
+	} else {
+	    hgt = lev.heightArr[col];
 	}
 	// height of ball is (nrows - 1 - i)*tile_Height + startingPoint
 	Flt h = lev.tilesize[1]*(lev.nrows - hgt) + lev.tile_base;
