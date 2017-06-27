@@ -22,6 +22,8 @@
 #include "log.h"
 #include "ppm.h"
 #include "fonts.h"
+#include "lab3http.h"
+#include <string>
 
 //defined types
 typedef double Flt;
@@ -100,16 +102,25 @@ class Sprite {
         }
 };
 
+enum State {
+	STATE_NONE,
+	STATE_STARTUP,
+	STATE_GAMEPLAY,
+	STATE_GAMEOVER
+
+};
 
 class Global {
     public:
         unsigned char keys[65536];
+	State state;
         int done;
         int xres, yres;
         int movie, movieStep;
         int walk;
         int walkFrame;
         double delay;
+	//char *message[] = *getMessage("www.cs.csubak.edu", " /~drezac/text.txt");
         Ppmimage *walkImage;
         GLuint walkTexture;
         Vec box[20];
@@ -124,6 +135,7 @@ class Global {
         }
         Global() {
             logOpen();
+	    state = STATE_STARTUP;
             camera[0] = camera[1] = 0.0;
             ball_pos[0] = 500.0;
             ball_pos[1] = ball_pos[2] = 0.0;
@@ -510,6 +522,9 @@ void checkKeys(XEvent *e)
     }
     if (shift) {}
     switch (key) {
+        case XK_p:
+            gl.state = STATE_GAMEPLAY;
+            break;
         case XK_s:
             screenCapture();
             break;
@@ -894,6 +909,38 @@ void render(void)
     ggprint8b(&r, 16, c, "frame: %i", gl.walkFrame);
     if (gl.movie) {
         screenCapture();
+    }
+
+    extern std::string getMessage();
+    std::string messy = getMessage();
+
+    //ck for startup state
+    if (gl.state == STATE_STARTUP) {
+        h = 100.0;
+        w = 2200.0;
+        glPushMatrix();
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4f(1.0, 1.0, 0.0, 0.5);
+        glTranslated(gl.xres/2, gl.yres/2, 0);
+        glBegin(GL_QUADS);
+        	glVertex2i(-w, -h);
+	        glVertex2i(-w,  h);
+        	glVertex2i( w,  h);
+	        glVertex2i( w, -h);
+        glEnd();
+	glDisable(GL_BLEND);
+        glPopMatrix();
+	r.bot = gl.yres/2 + 80;
+	r.left = gl.xres/2 ;
+	r.center = 1;
+	ggprint8b(&r, 16, 0, "Startup Screen");
+	r.center = 0;
+	ggprint8b(&r, 16, 0, "W Walk Cycle");
+	ggprint8b(&r, 16, 0, "P Play");
+	ggprint8b(&r, 16, 0, messy.c_str());//char*) getMessage()); //1, (char const*) "cs.csubak.edu ~drezac/text.txt"));
+	
+    	
     }
 }
 
