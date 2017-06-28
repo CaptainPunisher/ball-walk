@@ -45,18 +45,18 @@ extern std::string getMessage()//int argc, char **argv)
     char *host = myhost;
     char *page = mypage;
     std::string returnStuff;
-	
+
     /*
-    if (argc == 1) {
-        program_usage();
-        exit(2);
-    }  
-    host = argv[1];
-    if (argc > 2) {
-        page = argv[2];
-    } else {
-        //type cast PAGE to char * to avoid deprecated converion warning
-        page = (char *) PAGE;
+       if (argc == 1) {
+       program_usage();
+       exit(2);
+       }  
+       host = argv[1];
+       if (argc > 2) {
+       page = argv[2];
+       } else {
+    //type cast PAGE to char * to avoid deprecated converion warning
+    page = (char *) PAGE;
     }
     */
     sock = create_tcp_socket();
@@ -113,11 +113,11 @@ extern std::string getMessage()//int argc, char **argv)
         }
         if (htmlstart) {
             //fprintf(stdout, htmlcontent);
-	    returnStuff += htmlcontent;
-	}
+            returnStuff += htmlcontent;
+        }
 
         memset(buf, 0, tmpres);
-	//close(sock);
+        //close(sock);
     }
     if (tmpres < 0) {
         perror("Error receiving data");
