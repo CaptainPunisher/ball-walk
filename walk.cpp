@@ -89,6 +89,22 @@ class Timers {
 } timers;
 //------------------------------------------------------------------------
 
+extern std::string getMessage();
+std::string messy = getMessage();
+time_t timeCurr = time(NULL), timeGo = time(NULL);
+/*while (timeCurr - timeGo < 2) {
+	timeCurr = time(NULL)
+	std::string messy = getMessage();
+}*/
+void getSaying()
+{
+	timeCurr = time(NULL);
+	if (timeCurr - timeGo > 2) {
+		timeGo = time(NULL);
+		std::string messy = getMessage();
+	}
+
+}
 class Sprite {
     public:
         int onoff;
@@ -242,6 +258,10 @@ int main(void)
         }
         physics();
         render();
+		while (timeCurr - timeGo < 2) {
+			timeCurr = time(NULL);
+			std::string messy = getMessage();
+		}
         glXSwapBuffers(dpy, win);
     }
     cleanupXWindows();
@@ -526,11 +546,16 @@ void checkKeys(XEvent *e)
     }
     if (shift) {}
     switch (key) {
-        case XK_2:
+        /*
+		case XK_2:
             gl.state = STATE_PAUSE;
             break;
+*/
         case XK_p:
-            gl.state = STATE_GAMEPLAY;
+            if (gl.state == STATE_GAMEPLAY)
+				gl.state = STATE_PAUSE;
+			if (gl.state == STATE_PAUSE)
+				gl.state = STATE_GAMEPLAY;
             break;
         case XK_s:
             screenCapture();
@@ -919,9 +944,13 @@ void render(void)
         screenCapture();
     }
 
+/*
     extern std::string getMessage();
-    std::string messy = getMessage();
-
+	
+        struct timespec timeStart, timeEnd, timeCurrent;
+    while (timers.timeCurrent < timers.timeStart
+std::string messy = getMessage();
+*/
     //ck for startup state
     if (gl.state == STATE_STARTUP) {
         h = 100.0;
@@ -975,11 +1004,6 @@ void render(void)
         ggprint8b(&r, 16, 0, "Press P to Resume");
         ggprint8b(&r, 16, 0, messy.c_str());
 	
-	while (//key input != p) {
-		
-		
-	    //}
-
     }
 }
 
